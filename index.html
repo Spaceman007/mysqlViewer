@@ -1,0 +1,85 @@
+<!DOCTYPE html>
+<html>
+	<head>
+    <title>MySQL + Node.js 极简系统</title>
+		<meta charset='utf-8'>
+		<link rel="stylesheet" href="css/bootstrap.min.css">
+		<script src="js/angular.min.js"></script>
+		<script src="js/angular-animate.min.js"></script>
+    <script src="js/ui-bootstrap-tpls.js"></script>
+    <style>
+      td {
+        white-space:nowrap;
+      }
+    </style>
+	</head>
+	<body ng-app="myApp" ng-controller="myCtrl">
+    <div class="page-header">
+      <h2 style="margin-left: 30px;color:#458994;">小型MySQL操作界面
+        <small>选择数据库</small>
+        <select class="form-control" ng-options="db.Database for db in dbs" | filter: filterStr ng-model='dbOpt' ng-click='selectDb()' style='width:200px;display:inline-block;'></select>
+        <small>选择表</small>
+        <select class="form-control" ng-options="option.name for option in options | filter: filterStr" ng-model="type" ng-click="selectIt()" style="width:300px;display:inline-block;"></select>
+        <input type="text" class="form-control" style="width:300px;display:inline-block;" placeholder="输入筛选值" ng-model="filterStr">
+        <small style="color:#888;">筛选表</small>
+      </h2>
+      <form class="form-inline" action="javascript:;" style="margin-left:30px;">
+        <input class="form-control" type="text" ng-model="querykey" style="width:50%;" placeholder="输入SQL语句">
+        <button class="btn btn-default" ng-click="exec()">执行SQL</button>
+        <button class="btn btn-primary" ng-click="desc()">表信息</button>
+        <button class="btn btn-primary" ng-click="selectIt()">表内容</button>
+        <button class="btn btn-primary" ng-click="insert()">插入</button>
+        <button class="btn btn-primary" ng-click="delete()">删除</button>
+        <button class="btn btn-primary" ng-click="modify()">修改</button>
+        <button class="btn btn-primary" ng-click="clone()">复制</button>
+      </form>
+    </div>
+
+    <table class="table table-striped table-bordered" style="margin:10px;">
+      <thead>
+        <tr>
+          <th ng-show="header"><input type="checkbox" ng-model="all" ng-click="toggleAll()"></th>
+          <th ng-repeat="x in header">{{x}}</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr ng-repeat="x in xlist">
+          <td><input type="checkbox" ng-checked="all" ng-model="x.checked"></td>
+          <td ng-repeat="(k,y) in x" ng-bind='y' ng-if="k!='checked'"></td>
+        </tr>
+      </tbody>
+    </table>
+    <script src="ctrl.js"></script>
+    <script type="text/ng-template" id="myModal.html">
+			 <div class="modal-header">
+				 <h3 class="modal-title">插入</h3>
+			 </div>
+			 <div class="modal-body">
+         <form class="form-horizontal" action="javascript:;">
+           <div class="form-group" ng-repeat="x in xlist">
+             <label class="col-sm-4 control-label"><i style="color:red" ng-if="x.required">*</i> {{x.name}}</label>
+             <div class="col-sm-8">
+               <input class="form-control" type="text" ng-model="x.val" placeholder="{{x.holder}}">
+             </div>
+           </div>
+         </form>
+			 </div>
+			 <div class="modal-footer">
+				 <button class="btn btn-primary" ng-click="ok()">OK</button>
+				 <button class="btn btn-primary" ng-click="cancel()">Cancel</button>
+			 </div>
+    </script>
+    <script type="text/ng-template" id="myAlert.html">
+			<div class="modal-header">
+				<h3 class="modal-title">提示</h3>
+			</div>
+			<div class="modal-body">
+				<p>{{msg}}</p>
+			</div>
+			<div class="modal-footer">
+				<button class="btn btn-primary" ng-click="ok()">OK</button>
+			</div>
+		</script>
+
+	</body>
+</html>
